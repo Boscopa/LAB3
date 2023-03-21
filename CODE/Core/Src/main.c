@@ -50,6 +50,8 @@ uint32_t InputCaptureBuffer[IC_BUFFER_SIZE];
 float averageRisingedgePeriod;
 uint32_t MotorSetduty = 0;
 float MotorReadRPM = 0;
+int MotorControEnable = 0;
+int MotorSetRPM = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -124,6 +126,21 @@ int main(void)
 
 		  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,MotorSetduty*10);
 		  MotorReadRPM = (60*1000000)/((12*64)*averageRisingedgePeriod);
+
+
+
+		  if(MotorControEnable == 0){
+			  __HAL_TIM_SET_COMPARE(&htim1,TIM_CHANNEL_1,MotorSetduty*10);
+		  }
+		  else if(MotorControEnable == 1){
+			  if(MotorReadRPM < MotorSetRPM){
+				  MotorSetduty = MotorSetduty+1;
+			  }
+			  else if(MotorReadRPM > MotorSetRPM){
+				  MotorSetduty = MotorSetduty-1;
+			  }
+		  }
+
 	  }
   }
   /* USER CODE END 3 */
